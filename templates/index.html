@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pays Aléatoires</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Liste des Pays</h1>
+        <button id="addBtn">Ajouter 10 pays aléatoires</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Capitale</th>
+                    <th>Drapeau</th>
+                    <th>Sous-région</th>
+                    <th>Population</th>
+                </tr>
+            </thead>
+            <tbody id="countriesTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const tableBody = document.getElementById('countriesTable');
+        const addBtn = document.getElementById('addBtn');
+
+        async function loadCountries() {
+            tableBody.innerHTML = '';
+            const res = await fetch('/countries');
+            const countries = await res.json();
+            countries.forEach(c => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${c.id}</td>
+                    <td>${c.name}</td>
+                    <td>${c.capital || '-'}</td>
+                    <td>${c.flag || '-'}</td>
+                    <td>${c.subregion || '-'}</td>
+                    <td>${c.population || '-'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        addBtn.addEventListener('click', async () => {
+            await fetch('/add_countries');
+            loadCountries();
+        });
+
+        loadCountries();
+    </script>
+</body>
+</html>
